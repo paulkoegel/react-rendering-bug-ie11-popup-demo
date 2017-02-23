@@ -1,0 +1,52 @@
+# Demo Repository for React Rendering Bug in IE11 Popups
+
+When React renders to a popup window, components with multiple children can break rendering in IE11.
+This repository serves as a simple demo to illustrate the problem.
+
+**Broken:**
+![screenshot broken](screenshot-broken.png)
+
+**Fixed:**
+![screenshot fixed](screenshot-fixed.png)
+
+React and ReactDOM versions used: 15.4.2.
+
+[vendor/react-dom-fixed.js](vendor/react-dom-fixed.js) contains a fix.
+
+## Original Error Message
+
+```
+SCRIPT87: Invalid argument.
+File: react-dom.js, Line: 1598, Column: 5
+```
+
+```
+var insertTreeBefore = createMicrosoftUnsafeLocalFunction(function (parentNode, tree, referenceNode) {
+  // DocumentFragments aren't actually part of the DOM after insertion so
+  // appending children won't update the DOM. We need to ensure the fragment
+  // is properly populated first, breaking out of our lazy approach for just
+  // this level. Also, some <object> plugins (like Flash Player) will read
+  // <param> nodes immediately upon insertion into the DOM, so <object>
+  // must also be populated prior to insertion into the DOM.
+  if (tree.node.nodeType === DOCUMENT_FRAGMENT_NODE_TYPE || tree.node.nodeType === ELEMENT_NODE_TYPE && tree.node.nodeName.toLowerCase() === 'object' && (tree.node.namespaceURI == null || tree.node.namespaceURI === DOMNamespaces.html)) {
+    insertTreeChildren(tree);
+    parentNode.insertBefore(tree.node, referenceNode); // ERRONEOUS LINE
+  } else {
+    parentNode.insertBefore(tree.node, referenceNode);
+    insertTreeChildren(tree);
+  }
+});
+```
+
+## Workaround / Fix
+
+```diff
+-    parentNode.insertBefore(tree.node, referenceNode); // ERRONEOUS LINE
++    if (referenceNode) {
++      parentNode.insertBefore(tree.node, referenceNode);
++    } else {
++      parentNode.appendChild(tree.node);
++    }
+```
+
+**Explanation:** when referenceNode is `null` it will insert `tree.node` at the end of `parentNode` and can be replaced with `appendChild`. For some reason `appendChild` doesn't crash rendering and fixes the issue.
