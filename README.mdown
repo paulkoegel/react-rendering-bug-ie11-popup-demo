@@ -58,7 +58,7 @@ var insertTreeBefore = createMicrosoftUnsafeLocalFunction(function (parentNode, 
 });
 ```
 
-## Workaround / Fix
+## Workaround / Fix (!?)
 
 ```diff
 -    parentNode.insertBefore(tree.node, referenceNode); // ERRONEOUS LINE
@@ -69,4 +69,4 @@ var insertTreeBefore = createMicrosoftUnsafeLocalFunction(function (parentNode, 
 +    }
 ```
 
-**Explanation:** when referenceNode is `null` it will insert `tree.node` at the end of `parentNode` and can be replaced with `appendChild`. For some reason `appendChild` doesn't crash rendering and fixes the issue.
+**Explanation:** when `referenceNode` is `null` it will insert `tree.node` at the end of `parentNode` and can be replaced with `appendChild`. For some reason `appendChild` doesn't crash rendering and fixes the issue.
