@@ -3,6 +3,9 @@
 When React renders to a popup window, components with multiple children can break rendering in IE11.
 This repository serves as a simple demo to illustrate the problem.
 
++ [Run the broken demo (requires IE11)](https://paulkogel.github.io/react-rendering-bug-ie11-popup-demo/)
++ [Run the fixed demo](https://paulkogel.github.io/react-rendering-bug-ie11-popup-demo/fixed.html)
+
 **Broken:**
 ![screenshot broken](screenshot-broken.png)
 
