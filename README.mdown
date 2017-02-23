@@ -13,6 +13,26 @@ React and ReactDOM versions used: 15.4.2.
 
 [vendor/react-dom-fixed.js](vendor/react-dom-fixed.js) contains a fix.
 
+## Example for Problematic Markup
+```
+<div>
+  {1}/{10}
+</div>
+```
+
+Which Babel converts to
+```
+React.createElement(
+  "div",
+  null,
+  1, // multiple children!
+  "/",
+  10
+);
+```
+
+For simplicity's sake we're using neither Babel nor JSX in this repository.
+
 ## Original Error Message
 
 ```
